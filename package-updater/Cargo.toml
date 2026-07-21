@@ -3,7 +3,7 @@ name = "cosmic-ext-applet-package-updater"
 version = "1.0.0"
 edition = "2021"
 license = "GPL-3.0"
-rust-version = "1.80"
+rust-version = "1.93"
 description = "COSMIC Package Updater Applet for Arch Linux"
 authors = ["COSMIC Community"]
 
@@ -19,10 +19,10 @@ rand = "0.8"
 zbus = "5.1.1"
 async-stream = "0.3"
 notify = "8.0.0"
-cosmic-config = { git = "https://github.com/pop-os/libcosmic.git", rev = "52b802a" }
+cosmic-config = { git = "https://github.com/pop-os/libcosmic.git", rev = "ef162b8e16ba4493e05c169cd56c7b9f77f0fda5" }
 
 [dependencies.libcosmic]
 git = "https://github.com/pop-os/libcosmic.git"
-rev = "52b802a"
+rev = "ef162b8e16ba4493e05c169cd56c7b9f77f0fda5"
 default-features = false
 features = ["applet", "tokio", "wayland", "autosize"]

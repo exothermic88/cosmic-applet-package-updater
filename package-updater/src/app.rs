@@ -4,7 +4,7 @@ use cosmic::iced::{time, Subscription, window::Id, Limits};
 use cosmic::iced::platform_specific::shell::wayland::commands::popup::{destroy_popup, get_popup};
 use cosmic::iced::window;
 use cosmic::widget::{
-    button, column, row, text, text_input, toggler, Space, horizontal_space, divider, scrollable, autosize
+    button, text, text_input, toggler, Space, space, divider, scrollable, autosize, Column, Row
 };
 use cosmic::Element;
 use std::time::{Duration, Instant};
@@ -71,7 +71,7 @@ impl cosmic::Application for CosmicAppletPackageUpdater {
         &mut self.core
     }
 
-    fn style(&self) -> Option<cosmic::iced_runtime::Appearance> {
+    fn style(&self) -> Option<cosmic::iced::theme::Style> {
         Some(cosmic::applet::style())
     }
 
@@ -133,7 +133,7 @@ impl cosmic::Application for CosmicAppletPackageUpdater {
             };
 
             let custom_button = button::custom(
-                row()
+                Row::new()
                     .align_y(cosmic::iced::Alignment::Center)
                     .spacing(2)
                     .push(cosmic::widget::icon::from_name(self.get_icon_name()).size(16))
@@ -190,11 +190,11 @@ impl cosmic::Application for CosmicAppletPackageUpdater {
         })
         .on_press(Message::SwitchTab(PopupTab::Settings));
 
-        let tabs = row()
+        let tabs = Row::new()
             .width(cosmic::iced::Length::Fill)
             .push(updates_button)
             .push(
-                cosmic::widget::container(horizontal_space())
+                cosmic::widget::container(space::horizontal())
                     .width(cosmic::iced::Length::Fill)
             )
             .push(settings_button);
@@ -223,7 +223,7 @@ impl cosmic::Application for CosmicAppletPackageUpdater {
         };
 
         let package_illustration = cosmic::widget::container(
-            column()
+            Column::new()
                 .align_x(cosmic::iced::Alignment::Center)
                 .spacing(12)
                 .push(cosmic::widget::icon::from_name(icon_name).size(48))
@@ -241,17 +241,17 @@ impl cosmic::Application for CosmicAppletPackageUpdater {
         .padding(12);
 
         // Main content area with illustration
-        let main_content = row()
+        let main_content = Row::new()
             .spacing(space_m)
             .push(
-                column()
+                Column::new()
                     .spacing(space_s)
                     .width(cosmic::iced::Length::Fill)
                     .push(tab_content)
             )
             .push(package_illustration);
 
-        let content = column()
+        let content = Column::new()
             .spacing(space_s)
             .padding(space_m)
             .push(tabs)
@@ -485,10 +485,7 @@ impl cosmic::Application for CosmicAppletPackageUpdater {
             subscriptions.push(timer_subscription);
 
             // File watcher subscription to sync with other instances
-            let sync_subscription = Subscription::run_with_id(
-                "sync_watcher",
-                Self::watch_sync_file()
-            );
+            let sync_subscription = Subscription::run(Self::watch_sync_file);
             subscriptions.push(sync_subscription);
         }
 
@@ -647,7 +644,7 @@ impl CosmicAppletPackageUpdater {
             widgets.push(text(time_text).size(12).into());
         }
 
-        widgets.push(Space::with_height(cosmic::iced::Length::Fixed(16.0)).into());
+        widgets.push(Space::new().height(cosmic::iced::Length::Fixed(16.0)).into());
 
         // Check button
         widgets.push(
@@ -669,14 +666,14 @@ impl CosmicAppletPackageUpdater {
         }
 
         if self.update_info.has_updates() {
-            widgets.push(Space::with_height(cosmic::iced::Length::Fixed(16.0)).into());
+            widgets.push(Space::new().height(cosmic::iced::Length::Fixed(16.0)).into());
 
             // Show package list
             widgets.push(text("Packages to update:").size(14).into());
-            widgets.push(Space::with_height(cosmic::iced::Length::Fixed(8.0)).into());
+            widgets.push(Space::new().height(cosmic::iced::Length::Fixed(8.0)).into());
 
             // Create scrollable list of packages
-            let mut package_list = column().spacing(4);
+            let mut package_list = Column::new().spacing(4);
 
             // Group packages by type - only if package manager supports AUR
             let supports_aur = self.config.package_manager
@@ -705,7 +702,7 @@ impl CosmicAppletPackageUpdater {
 
                 if !aur_packages.is_empty() {
                     if !official_packages.is_empty() {
-                        package_list = package_list.push(Space::with_height(cosmic::iced::Length::Fixed(8.0)));
+                        package_list = package_list.push(Space::new().height(cosmic::iced::Length::Fixed(8.0)));
                     }
                     package_list = package_list.push(text("AUR:").size(12));
                     for package in aur_packages.iter() {
@@ -737,7 +734,7 @@ impl CosmicAppletPackageUpdater {
                         .height(cosmic::iced::Length::Fixed(100.0)) // Reasonable height with more popup space
                 )
                 .style(|_theme| cosmic::widget::container::Style {
-                    background: Some(cosmic::iced_core::Background::Color([0.1, 0.1, 0.1, 0.1].into())),
+                    background: Some(cosmic::iced::Background::Color([0.1, 0.1, 0.1, 0.1].into())),
                     border: cosmic::iced::Border {
                         radius: cosmic::iced::border::Radius::from(8.0),
                         width: 1.0,
@@ -752,7 +749,7 @@ impl CosmicAppletPackageUpdater {
 
         }
 
-        column()
+        Column::new()
             .spacing(8)
             .extend(widgets)
             .into()
@@ -788,7 +785,7 @@ impl CosmicAppletPackageUpdater {
             }
         }
 
-        widgets.push(Space::with_height(cosmic::iced::Length::Fixed(16.0)).into());
+        widgets.push(Space::new().height(cosmic::iced::Length::Fixed(16.0)).into());
 
         // Check interval
         widgets.push(text("Check Interval (minutes)").size(14).into());
@@ -800,15 +797,15 @@ impl CosmicAppletPackageUpdater {
                 .into(),
         );
 
-        widgets.push(Space::with_height(cosmic::iced::Length::Fixed(8.0)).into());
+        widgets.push(Space::new().height(cosmic::iced::Length::Fixed(8.0)).into());
 
         // Toggles
         widgets.push(
-            row()
+            Row::new()
                 .spacing(8)
                 .align_y(cosmic::iced::Alignment::Center)
                 .push(text("Auto-check on startup"))
-                .push(Space::with_width(cosmic::iced::Length::Fill))
+                .push(Space::new().width(cosmic::iced::Length::Fill))
                 .push(toggler(self.config.auto_check_on_startup).on_toggle(Message::ToggleAutoCheck))
                 .into(),
         );
@@ -817,11 +814,11 @@ impl CosmicAppletPackageUpdater {
         if let Some(pm) = self.config.package_manager {
             if pm.supports_aur() {
                 widgets.push(
-                    row()
+                    Row::new()
                         .spacing(8)
                         .align_y(cosmic::iced::Alignment::Center)
                         .push(text("Include AUR updates"))
-                        .push(Space::with_width(cosmic::iced::Length::Fill))
+                        .push(Space::new().width(cosmic::iced::Length::Fill))
                         .push(toggler(self.config.include_aur_updates).on_toggle(Message::ToggleIncludeAur))
                         .into(),
                 );
@@ -829,26 +826,26 @@ impl CosmicAppletPackageUpdater {
         }
 
         widgets.push(
-            row()
+            Row::new()
                 .spacing(8)
                 .align_y(cosmic::iced::Alignment::Center)
                 .push(text("Show notifications"))
-                .push(Space::with_width(cosmic::iced::Length::Fill))
+                .push(Space::new().width(cosmic::iced::Length::Fill))
                 .push(toggler(self.config.show_notifications).on_toggle(Message::ToggleShowNotifications))
                 .into(),
         );
 
         widgets.push(
-            row()
+            Row::new()
                 .spacing(8)
                 .align_y(cosmic::iced::Alignment::Center)
                 .push(text("Show update count"))
-                .push(Space::with_width(cosmic::iced::Length::Fill))
+                .push(Space::new().width(cosmic::iced::Length::Fill))
                 .push(toggler(self.config.show_update_count).on_toggle(Message::ToggleShowUpdateCount))
                 .into(),
         );
 
-        widgets.push(Space::with_height(cosmic::iced::Length::Fixed(8.0)).into());
+        widgets.push(Space::new().height(cosmic::iced::Length::Fixed(8.0)).into());
 
         // Terminal setting
         widgets.push(text("Preferred Terminal").size(14).into());
@@ -864,7 +861,7 @@ impl CosmicAppletPackageUpdater {
                 .into(),
         );
 
-        column()
+        Column::new()
             .spacing(8)
             .extend(widgets)
             .into()
