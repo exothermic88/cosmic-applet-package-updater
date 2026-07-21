@@ -3,7 +3,7 @@
 # repo root). Note that uncommitted changes in the working tree get packaged.
 pkgname=ncos-package-update-applet
 pkgver=2.0.0
-pkgrel=2
+pkgrel=3
 pkgdesc="COSMIC panel applet showing pending pacman, AUR and Flatpak updates"
 arch=('x86_64' 'aarch64')
 url="https://github.com/Ebbo/cosmic-applet-package-updater"

@@ -1,5 +1,6 @@
 use cosmic::app::{Core, Task};
 use cosmic::cosmic_config::Config;
+use cosmic::iced::platform_specific::shell::commands::blur;
 use cosmic::iced::platform_specific::shell::wayland::commands::popup::{destroy_popup, get_popup};
 use cosmic::iced::window;
 use cosmic::iced::{time, Subscription, window::Id, Limits};
@@ -525,7 +526,24 @@ impl CosmicAppletPackageUpdater {
                     .min_height(350.0)
                     .max_height(800.0);
 
-                Task::batch(vec![get_popup(popup_settings), window::gain_focus(new_id)])
+                let mut tasks = vec![get_popup(popup_settings), window::gain_focus(new_id)];
+                // This libcosmic rev doesn't request blur for get_popup
+                // surfaces in applets — request the compositor's
+                // background-effect directly for the popup surface
+                // (whole-surface region; the compositor clips it).
+                if cosmic::theme::active().cosmic().frosted_applets {
+                    tasks.push(
+                        blur::blur(
+                            new_id,
+                            Some(vec![cosmic::iced::Rectangle::new(
+                                cosmic::iced::Point::ORIGIN,
+                                cosmic::iced::Size::new(4096.0, 4096.0),
+                            )]),
+                        )
+                        .discard(),
+                    );
+                }
+                Task::batch(tasks)
             } else {
                 eprintln!("Failed to get main window ID for popup");
                 self.error_message = Some("Unable to open popup window".to_string());
