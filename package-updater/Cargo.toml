@@ -1,6 +1,6 @@
 [package]
 name = "cosmic-ext-applet-package-updater"
-version = "1.0.0"
+version = "2.0.0"
 edition = "2021"
 license = "GPL-3.0"
 rust-version = "1.93"
@@ -10,15 +10,9 @@ authors = ["COSMIC Community"]
 [dependencies]
 tokio = { version = "1.45.1", features = ["full"] }
 serde = { version = "1.0.219", features = ["derive"] }
-anyhow = "1.0.98"
 futures = "0.3.31"
-chrono = "0.4.41"
-regex = "1.11.1"
-toml = "0.8"
-rand = "0.8"
-zbus = "5.1.1"
 async-stream = "0.3"
-notify = "8.0.0"
+notify = "8.2.0"
 cosmic-config = { git = "https://github.com/pop-os/libcosmic.git", rev = "ef162b8e16ba4493e05c169cd56c7b9f77f0fda5" }
 
 [dependencies.libcosmic]
