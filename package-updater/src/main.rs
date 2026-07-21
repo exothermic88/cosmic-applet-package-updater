@@ -1,6 +1,6 @@
 mod app;
 mod config;
-mod package_manager;
+mod updates;
 
 use app::CosmicAppletPackageUpdater;
 

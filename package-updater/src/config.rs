@@ -1,16 +1,19 @@
 use cosmic_config::{Config, ConfigGet, ConfigSet};
 use serde::{Deserialize, Serialize};
 
-use crate::package_manager::PackageManager;
-
 pub const CONFIG_VERSION: u64 = 1;
+
+fn default_true() -> bool {
+    true
+}
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PackageUpdaterConfig {
-    pub package_manager: Option<PackageManager>,
     pub check_interval_minutes: u32,
     pub auto_check_on_startup: bool,
     pub include_aur_updates: bool,
+    #[serde(default = "default_true")]
+    pub include_flatpak_updates: bool,
     pub show_notifications: bool,
     pub show_update_count: bool,
     pub preferred_terminal: String,
@@ -19,10 +22,10 @@ pub struct PackageUpdaterConfig {
 impl Default for PackageUpdaterConfig {
     fn default() -> Self {
         Self {
-            package_manager: None,
             check_interval_minutes: 60,
             auto_check_on_startup: true,
             include_aur_updates: true,
+            include_flatpak_updates: true,
             show_notifications: true,
             show_update_count: true,
             preferred_terminal: "cosmic-term".to_string(),
